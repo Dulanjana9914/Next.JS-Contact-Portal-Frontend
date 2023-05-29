@@ -1,6 +1,6 @@
 import LogoWhite from '@/Components/LogoWhite';
 import Image from 'next/image';
-import IconLogout from '../../../public/assets/bx_log-out-circle.png'
+import IconLogout from '../../../public/assets/IconLogout.svg'
 
 
 export default function Allcontacts() {

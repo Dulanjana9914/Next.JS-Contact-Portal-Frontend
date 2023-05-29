@@ -3,7 +3,7 @@
 //import { useEffect } from 'react';
 import LogoWhite from '../../../Components/LogoWhite';
 import Image from 'next/image';
-import IconLogout from '../../../../public/assets/bx_log-out-circle.png'
+import IconLogout from '../../../../public/assets/IconLogout.svg'
 import { useRouter } from 'next/navigation';
 
 export default function NewContact() {
