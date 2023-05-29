@@ -10,7 +10,7 @@ export default function WelcomePage() {
   const route = useRouter();
   return (
     <main>
-      <section className="bgcontainer ">
+      <section className="bgcommon">
         <div className="flex justify-between flex-col h-full">
           <LogoWhite />
           <div className="mb-10">

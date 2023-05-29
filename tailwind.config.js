@@ -8,9 +8,9 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        ellipse: "url('/assets/CommonBG.svg')",
+        common: "url('/assets/CommonBG.svg')",
         contact: "url('/assets/contact2.svg')",
-        loginBG: "url('/assets/loginBackground.svg')",
+        loginBG: "url('/assets/LoginBG.svg')",
        
       },
       colors: {
