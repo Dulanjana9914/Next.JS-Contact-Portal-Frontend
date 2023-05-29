@@ -8,19 +8,15 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        common: "url('/assets/CommonBG.svg')",
-        contact: "url('/assets/contact2.svg')",
         loginBG: "url('/assets/LoginBG.svg')",
-       
+        common: "url('/assets/CommonBG.svg')"
       },
       colors: {
         primary: 'rgba(8, 63, 70, 1)',
-        secondary: '#0bcc3b',
+        secondary: '#0bcc3b'
       },
       fontFamily: {
-        FutuLight: 'FutuLight',
-        Futura: ['Futura Md BT'],
-
+        Futura: ['Futura Md BT']
       },
     },
   },

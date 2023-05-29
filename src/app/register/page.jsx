@@ -51,7 +51,7 @@ export default function Register() {
                                 register
                             </button>
                             <p className="mt-16 text-white font-medium  text-[20px] leading-[45px]">
-                                <Link className="font-Futu underline mb-5 hover:text-amber-600" href="/register">
+                                <Link className="font-Futu underline mb-5 hover:text-amber-600" href="/login">
                                    &lt; Back to login
                                 </Link>
                             </p>

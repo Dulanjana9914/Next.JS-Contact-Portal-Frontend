@@ -3,7 +3,6 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-
 export default function Login() {
     const query = useRouter();
     return (
@@ -25,29 +24,29 @@ export default function Login() {
                                 name="email"
                                 placeholder="e-mail"
                                 className="inputField mt-10"
-                                // onChange={(e) =>
-                                //     setValues({ ...values, [e.target.name]: e.target.value })
-                                // }
+                            // onChange={(e) =>
+                            //     setValues({ ...values, [e.target.name]: e.target.value })
+                            // }
                             />
                             <input
                                 type="password"
                                 name="password"
                                 placeholder="password"
                                 className="inputField mt-10"
-                                // onChange={(e) =>
-                                //     setValues({ ...values, [e.target.name]: e.target.value })
-                                // }
+                            // onChange={(e) =>
+                            //     setValues({ ...values, [e.target.name]: e.target.value })
+                            // }
                             />
                         </div>
                         <div className='flex'>
                             <button type="submit" className="button w-32 h-12 mt-2">
-                            login
-                        </button>
-                        <p className="mt-2 text-white font-medium ml-4 text-[25px] leading-[50px]">
-                            or 
+                                login
+                            </button>
+                            <p className="mt-2 text-white font-medium ml-4 text-[25px] leading-[50px]">
+                                or
                                 <Link className="font-Futu underline ml-2 hover:text-amber-600" href="/register">
-                                Click here to Register
-                            </Link>
+                                    Click here to Register
+                                </Link>
                             </p>
                         </div>
                     </form>

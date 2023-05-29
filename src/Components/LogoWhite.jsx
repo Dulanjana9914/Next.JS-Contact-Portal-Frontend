@@ -12,7 +12,7 @@ export default function LogoWhite() {
         <Image
           src={logoWhite}
           alt="logoWhite"
-          className="cursor-pointer mb-24 md:w-[138px] md:h-[92px]"
+          className="cursor-pointer md:w-[138px] md:h-[92px] mb-20"
           onClick={() => route.push("/")}
         />
       </div>
