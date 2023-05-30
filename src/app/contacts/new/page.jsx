@@ -1,13 +1,61 @@
 'use client';
-//import { useRouter } from 'next/router';
-//import { useEffect } from 'react';
+import React, { useState } from 'react';
 import LogoWhite from '../../../Components/LogoWhite';
 import Image from 'next/image';
 import IconLogout from '../../../../public/assets/IconLogout.svg'
 import { useRouter } from 'next/navigation';
+import { isEmpty, isEmail } from '@/utils/validation';
+import { showErrMsg, showSuccessMsg } from "@/utils/Notification";
+import axios from 'axios';
 
+
+const initialState = {
+    fullname: "",
+    email: "",
+    phonenumber: "",
+    gender: "",
+    err: "",
+    success: "",
+}
 export default function NewContact() {
     const route = useRouter();
+    const [contact, setContact] = useState(initialState);
+    const { fullname, email, phonenumber, gender, err, success } = contact;
+
+    const handleChangeInput = (e) => {
+        const { name, value } = e.target;
+        setContact({ ...contact, [name]: value, err: "", success: "" });
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (isEmpty(fullname) || isEmpty(email) || isEmpty(phonenumber))
+            return setContact({
+                ...contact,
+                err: "Please fill all fields!",
+                success: "",
+            });
+
+        if (!isEmail(email))
+            return setContact({ ...contact, err: "Invalid email type!", success: "" });
+
+        try {
+            const res = await axios.post("http://localhost:8070/contacts/add", {
+                fullname,
+                email,
+                phonenumber,
+                gender
+            });
+            setContact({ ...contact, err: "", success: res.data.msg });
+            route.push('/contacts');
+
+
+        } catch (err) {
+            err.response.data.msg &&
+                setContact({ ...contact, err: err.response.data.msg, success: "" });
+        }
+    };
+
+
     return (
         <main>
             <section className="bgcommon">
@@ -17,36 +65,34 @@ export default function NewContact() {
                         <p className="text-white font-bold md:text-[45px] leading-[73px] mb-10 ">
                             New Contact
                         </p>
-                        <form>
+                        <div className='text-lg font-Futura'>
+                            {err && showErrMsg(err)}
+                            {success && showSuccessMsg(success)}
+                        </div>
+                        <form onSubmit={handleSubmit}>
                             <div className="flex flex-col md:flex-row gap-2 mb-2 justify-between md:mb-8">
                                 <input
                                     type="text"
                                     name="fullname"
                                     placeholder="full name"
                                     className="inputField font-medium"
-                                // onChange={(e) =>
-                                //     setValues({ ...values, [e.target.name]: e.target.value })
-                                // }
+                                    onChange={handleChangeInput}
                                 />
                                 <input
                                     type="email"
                                     name="email"
                                     placeholder="e-mail"
                                     className="inputField font-medium"
-                                // onChange={(e) =>
-                                //     setValues({ ...values, [e.target.name]: e.target.value })
-                                // }
+                                    onChange={handleChangeInput}
                                 />
                             </div>
                             <div className="flex flex-col md:flex-row justify-between gap-2 mb-8 md:mb-20">
                                 <input
                                     type="tel"
-                                    name="phoneNumber"
+                                    name="phonenumber"
                                     placeholder="phone number"
                                     className="inputField font-medium"
-                                // onChange={(e) =>
-                                //     setValues({ ...values, [e.target.name]: e.target.value })
-                                // }
+                                    onChange={handleChangeInput}
                                 />
                                 <div className="flex flex-row justify-between content-center text-[25px] md:w-[34vw] py-3 text-white align-middle font-medium">
                                     <span>gender</span>
@@ -57,12 +103,7 @@ export default function NewContact() {
                                             id="male"
                                             value="male"
                                             className="mr-2 border-2 border-white bg-primary mb-1"
-                                        // onChange={(e) =>
-                                        //     setValues({
-                                        //         ...values,
-                                        //         [e.target.name]: e.target.value,
-                                        //     })
-                                        // }
+                                            onChange={handleChangeInput}
                                         />
                                         <label htmlFor="male">male</label>
                                     </div>
@@ -73,12 +114,7 @@ export default function NewContact() {
                                             id="female"
                                             value="female"
                                             className="mr-2 border-2 border-white bg-primary mb-1"
-                                        // onChange={(e) =>
-                                        //     setValues({
-                                        //         ...values,
-                                        //         [e.target.name]: e.target.value,
-                                        //     })
-                                        // }
+                                            onChange={handleChangeInput}
                                         />
                                         <label htmlFor="female">female</label>
                                     </div>

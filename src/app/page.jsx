@@ -23,7 +23,7 @@ export default function WelcomePage() {
             <br />
             <div className="flex flex-row justify-between mt-12 font-Futura font-normal md:text-[25px] leading-[50px]">
               <button
-                //onClick={() => route.push('/contacts/new')}
+                onClick={() => route.push('/contacts/new')}
                 className="button"
               >
                 add your first contact

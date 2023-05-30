@@ -1,10 +1,60 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { isEmpty, isEmail } from '../../utils/validation.js';
+import { showErrMsg, showSuccessMsg } from "../../utils/Notification.jsx";
+import axios from 'axios';
+
+const initialState = {
+    email: "",
+    password: "",
+    err: "",
+    success: "",
+};
 
 export default function Login() {
-    const query = useRouter();
+    const [user, setUser] = useState(initialState);
+    const route = useRouter();
+    const { email, password,err, success } = user;
+
+    const handleChangeInput = (e) => {
+        const { name, value } = e.target;
+        setUser({ ...user, [name]: value, err: "", success: "" });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (
+            isEmpty(email) ||
+            isEmpty(password)
+        )
+            return setUser({
+                ...user,
+                err: "Please fill in all fields!",
+                success: "",
+            });
+
+        if (!isEmail(email))
+            return setUser({ ...user, err: "Invalid email type!", success: "" });
+        try {
+            const res = await axios.post("http://localhost:8070/user/login", { email, password });
+
+            setUser({ ...user, err: "", success: res.data.msg });
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", res.data.user);
+            localStorage.setItem("firstLogin", true);
+
+            setTimeout(() => {
+                route.push('/');
+            }, 1000);
+                 
+        } catch (err) {
+            err.response.data.msg &&
+                setUser({ ...user, err: err.response.data.msg, success: "" });
+        
+        }
+    };
     return (
         <section className="bglogin">
             <div className='-ml-20'>
@@ -17,25 +67,25 @@ export default function Login() {
                     </p>
                 </div>
                 <div>
-                    <form>
+                    <div className='text-lg font-Futura'>
+                        {err && showErrMsg(err)}
+                        {success && showSuccessMsg(success)}
+                    </div>
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col justify-between mb-10">
                             <input
                                 type="email"
                                 name="email"
                                 placeholder="e-mail"
                                 className="inputField mt-10"
-                            // onChange={(e) =>
-                            //     setValues({ ...values, [e.target.name]: e.target.value })
-                            // }
+                                onChange={handleChangeInput}
                             />
                             <input
                                 type="password"
                                 name="password"
                                 placeholder="password"
                                 className="inputField mt-10"
-                            // onChange={(e) =>
-                            //     setValues({ ...values, [e.target.name]: e.target.value })
-                            // }
+                                onChange={handleChangeInput}
                             />
                         </div>
                         <div className='flex'>

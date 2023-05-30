@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isEmpty, isEmail, isLength, isMatch } from '../../utils/validation.js';
@@ -55,10 +55,13 @@ export default function Register() {
                 password,
             });
             setUser({ ...user, err: "", success: res.data.msg });
-            route.push('/login');
+            setTimeout(() => {
+                route.push('/login');
+            }, 1000);
+
         } catch (err) {
             err.response.data.msg &&
-            setUser({ ...user, err: err.response.data.msg, success: "" });
+                setUser({ ...user, err: err.response.data.msg, success: "" });
         }
     };
 
@@ -73,7 +76,7 @@ export default function Register() {
                 <br></br>
                 <div>
                     <div className='text-lg font-Futura'>
-                        {err &&  showErrMsg(err)}
+                        {err && showErrMsg(err)}
                         {success && showSuccessMsg(success)}
                     </div>
                     <form onSubmit={handleSubmit}>
@@ -107,7 +110,7 @@ export default function Register() {
                             </button>
                             <p className="mt-16 text-white font-medium  text-[20px] leading-[45px]">
                                 <Link className="font-Futu underline mb-5 hover:text-amber-600" href="/login">
-                                   &lt; Back to login
+                                    &lt; Back to login
                                 </Link>
                             </p>
                         </div>
