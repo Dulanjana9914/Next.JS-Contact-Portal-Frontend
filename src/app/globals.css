@@ -18,7 +18,7 @@
   }
 
   .form-input-contact {
-    @apply text-sm md:text-xl font-semibold bg-primary bg-opacity-10 outline-none border-0 border-r-4 border-r-primary px-3 py-1 focus:outline-none focus:ring-0 focus:border-r-primary transition-all duration-300 ease-linear;
+    @apply text-sm md:text-xl text-primary bg-slate-300 font-semibold outline-none border-0 border-r-4 border-r-primary px-3 py-1 focus:outline-none focus:ring-0 focus:border-r-primary transition-all duration-300 ease-linear;
   }  
 }
 

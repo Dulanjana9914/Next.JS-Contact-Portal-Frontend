@@ -1,34 +1,57 @@
 import React, { useState } from 'react';
-import MaleAvatar from '../public/assets/MaleAvatar.svg';
-import FemaleAvatar from '../public/assets/FemaleAvatar.svg';
-import IconInterchange from '../public/assets/IconInterchange.svg';
-
+import MaleAvatar from '../../public/assets/MaleAvatar.svg';
+import FemaleAvatar from '../../public/assets/FemaleAvatar.svg';
+import IconInterchange from '../../public/assets/IconInterchange.svg';
 import Image from 'next/image';
 import CustomMessages from './CustomMessages';
+import axios from 'axios';
 
 export function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
-export default function EditContact({ contacts, handleEditChange, handleCancel }) {
+export default function EditContact({ contacts,handleCancel }) {
     const [rotate, setRotate] = useState(false);
     const [toggle, setToggle] = useState(contacts.gender);
     const [showSaveAlert, setshowSaveAlert] = useState(false);
+    const [updatedData, setUpdatedData] = useState({contacts});
 
     const handleGender = () => {
-        if (toggle == 'male') {
-            setToggle('female');
-            contacts.gender = 'female';
-        } else {
-            setToggle('male');
-            contacts.gender = 'male';
-        }
+        const newGender = toggle === 'male' ? 'female' : 'male';
+        setToggle(newGender);
+        contacts.gender = newGender;
         setRotate(!rotate);
     };
     const handleshowAlert = () => {
         if (contacts.fullname && contacts.gender && contacts.email && contacts.phoneNumber) {
-            setshowSaveAlert(!showSaveAlert);
+            setshowSaveAlert(showSaveAlert);
         }
     }
+
+    const handleChangeInput = (e) => {
+        const { name, value } = e.target;
+        setUpdatedData({ ...updatedData, [name]: value, err: "", success: "" });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const data = await axios
+            .patch(`http://localhost:8070/contacts/update/${contacts._id}`, {
+                fullname: updatedData.fullname,
+                email: updatedData.email,
+                gender: toggle,
+                phonenumber: updatedData.phonenumber,
+            }
+                //     {
+                //     headers: { Authorization: localStorage.getItem('token') },
+                // }
+            )
+            .then((res) => {
+                setshowSaveAlert(true);
+                handleshowAlert();
+            })
+            .catch((err) => console.log(err));
+    };
+
 
     return (
         <>
@@ -36,9 +59,9 @@ export default function EditContact({ contacts, handleEditChange, handleCancel }
                 <tr key={(contacts._id) + 'alert'}>
                     <td>
                         <CustomMessages
-                            content="Your contact has been saved successfully!"
+                            message="Your contact has been saved successfully!"
                             button="Okay"
-                            handleButton={handleCancel}
+                            action={handleCancel}
                         />
                     </td>
                 </tr>
@@ -52,27 +75,30 @@ export default function EditContact({ contacts, handleEditChange, handleCancel }
                         <Image src={FemaleAvatar} alt="Female avatar" />
                     )}
                 </td>
-                <td className="py-3 pr-10  ">
+                <td className="py-3 pr-10">
                     <input
                         type="text"
                         required="required"
+                        id="fullname"
                         placeholder="fullname"
                         name="fullname"
-                        value={contacts.fullname}
-                        onChange={handleEditChange}
+                        defaultValue ={contacts.fullname}
+                        onChange={handleChangeInput}
                         className="form-input-contact w-44"
                     />
                 </td>
                 <td className="py-3 pr-10 relative">
+                    
                     <input
                         type="text"
                         required="required"
                         placeholder="gender"
+                        id="gender"
                         name="gender"
                         value={toggle}
-                        onChange={handleEditChange}
+                        onChange={handleChangeInput}
                         className="form-input-contact w-28 border-r-0"
-                        disabled
+                      
                     />
                     <Image
                         src={IconInterchange}
@@ -90,10 +116,11 @@ export default function EditContact({ contacts, handleEditChange, handleCancel }
                     <input
                         type="text"
                         required="required"
-                        placeholder="email"
+                        placeholder="e-mail"
+                        id="email"
                         name="email"
-                        value={contacts.email}
-                        onChange={handleEditChange}
+                        defaultValue={contacts.email}
+                        onChange={handleChangeInput}
                         className="form-input-contact w-full"
                     />
                 </td>
@@ -101,10 +128,11 @@ export default function EditContact({ contacts, handleEditChange, handleCancel }
                     <input
                         type="text"
                         required="required"
-                        placeholder="phoneNumber"
-                        name="phoneNumber"
-                        value={contacts.phoneNumber}
-                        onChange={handleEditChange}
+                        placeholder="phone number"
+                        id="phonenumber"
+                        name="phonenumber"
+                        defaultValue={contacts.phonenumber}
+                        onChange={handleChangeInput}
                         className="form-input-contact w-40"
                     />
                 </td>
@@ -112,9 +140,9 @@ export default function EditContact({ contacts, handleEditChange, handleCancel }
                     <button
                         data-modal-target="popup-modal"
                         data-modal-toggle="popup-modal"
-                        className="text-white bg-primary text-sm px-4 leading-7  pb-1 rounded-full tracking-widest font-semibold font-FutuLight shadow-md hover:bg-secondary "
+                        className="text-white bg-primary text-sm px-4 leading-7  pb-1 rounded-full tracking-widest font-semibold font-Futura shadow-md hover:bg-secondary "
                         type="submit"
-                        onClick={handleshowAlert}
+                        onClick={handleSubmit}
                     >
                         save
                     </button>

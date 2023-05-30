@@ -5,21 +5,12 @@ import IconLogout from '../../../public/assets/IconLogout.svg'
 import { useRouter } from 'next/navigation';
 import React, {Fragment,useState, useEffect } from 'react';
 import axios from 'axios';
-import { isEmpty, isEmail } from '@/utils/validation';
-import { showErrMsg, showSuccessMsg } from "@/utils/Notification";
+import DisplayContact from '../../Components/DisplayContact';
+import EditContact from '../../Components/EditContact';
 
-const initialState = {
-    fullname: "",
-    email: "",
-    phonenumber: "",
-    gender: "",
-    err: "",
-    success: "",
-}
 
 export default function Allcontacts() {
-    const[token,setToken]=useState(null);
-    const [contact, setContact] = useState(initialState);
+    //const[token,setToken]=useState(null);
     const route = useRouter();
     const [allContacts, setAllContacts] = useState([]);
     const [change, setChange] = useState(false)
@@ -37,7 +28,7 @@ export default function Allcontacts() {
         // if (!token) {
         //     route.push('/login');
         // }
-         setToken(localStorage.getItem('token'))
+
         const getallContacts = async () => {
             await axios
                 .get('http://localhost:8070/contacts')
@@ -46,44 +37,27 @@ export default function Allcontacts() {
                 })
                 .catch((err) => {
                     console.log(err);
-                });
-        };
+                });      
+        };       
         getallContacts();
         setChange(false)
-    }, [change,token,route]);
+    }, [change]);
 
-    const handleInput = (e) => {
-        const { name, value } = e.target;
-        setEditedData({ ...editedData, [name]: value, err: "", success: "" });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const data = await axios
-            .patch(`http://localhost:8070/contacts/${editedContact}`, editedData
-            //     {
-            //     headers: { Authorization: localStorage.getItem('token') },
-            // }
-        )
-            .then((res) => {
-                setChange(true)
-            })
-            .catch((err) => console.log(err));
-    };
 
     const handleEdit = (e, contacts) => {
         e.preventDefault();
         setEditedContact(contacts._id);
-        setEditValues({ ...contacts });
+        setEditedData({ ...contacts });
     };
 
     const handleCancel = () => {
         setEditedContact(null);
+        setChange(true)
     };
 
     const handleDelete = async (contactId) => {
         await axios
-            .delete(`http://localhost:8070/contacts/${contactId}`)
+            .delete(`http://localhost:8070/contacts/delete/${contactId}`)
             .then((res) => {
                 setChange(true)
             })
@@ -99,7 +73,7 @@ export default function Allcontacts() {
                     <div className="flex justify-between flex-col h-full font-Futura -mt-4">
                         <LogoWhite />
                         <div className="flex gap-1 flex-col">
-                            <div className="flex flex-row justify-between items-baseline h-16 -mt-10">
+                            <div className="flex flex-row justify-between h-16 -mt-10 items-baseline">
                                 <p className="font-Futura text-white font-bold md:text-[45px] leading-[73px] mb-10 ">
                                     Contacts
                                 </p>
@@ -111,11 +85,11 @@ export default function Allcontacts() {
                                 </button>
                             </div>
                             <div className="bg-white mt-4 h-[45vh] md:px-4 md:rounded-3xl w-full py-4 text-primary overflow-y-auto">
-                                <form onSubmit={handleSubmit}>
+                                <form >
                                     <table className="w-full text-sm md:text-[20px] text-left font-FutuLight font-semibold transition-all duration-300 ease-linear border-spacing-6">
                                         <thead className="text-sm md:text-[18px] font-Futura font-semibold">
                                             <tr>
-                                                <th className="pb-3 md:w-15">&nbsp;</th>
+                                                <th className="pb-3 md:w-15"></th>
                                                 <th className="pb-3  md:w-52">full name</th>
                                                 <th className="pb-3 md:w-28">gender</th>
                                                 <th className="pb-3 md:w-52">e-mail</th>
@@ -124,16 +98,23 @@ export default function Allcontacts() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {allContacts && allContacts.map((data, index) => (
-
-                                                     <tr key={index}>
-
-                                                    <td> <b> {data.fullname} </b></td>
-                                                    <td> <b> {data.email} </b> </td>
-                                                    <td> <b> {data.phonenumber} </b> </td>
-                                                    <td> <b> {data.gender} </b> </td>
-                                                </tr>
-                                            ))}                
+                                            {allContacts && allContacts.map((contacts) => (
+                                                <Fragment key={contacts._id}>
+                                                    {editedContact === contacts._id ? (
+                                                        <EditContact
+                                                            contacts={contacts}
+                                                            handleCancel={handleCancel}
+                                                        />
+                                                    ) : (
+                                                        <DisplayContact
+                                                            contacts={contacts}
+                                                            handleEdit={handleEdit}
+                                                            handleDelete={handleDelete}
+                                                            handleCancel={handleCancel}
+                                                        />
+                                                    )}
+                                                </Fragment>
+                                            ))}              
                                         </tbody>
                                     </table>
                                 </form>
