@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import MaleAvatar from '../../public/assets/MaleAvatar.svg';
 import FemaleAvatar from '../../public/assets/FemaleAvatar.svg';
 import IconInterchange from '../../public/assets/IconInterchange.svg';
@@ -9,14 +10,16 @@ import axios from 'axios';
 export function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
-export default function EditContact({ contacts,handleCancel }) {
+
+export default function EditContact({ contacts, handleCancel }) {
     const [rotate, setRotate] = useState(false);
     const [toggle, setToggle] = useState(contacts.gender);
     const [showSaveAlert, setshowSaveAlert] = useState(false);
-    const [updatedData, setUpdatedData] = useState({contacts});
+    const [updatedData, setUpdatedData] = useState({ contacts });
+    const token = localStorage.getItem('token');
 
     const handleGender = () => {
-        const newGender = toggle === 'male' ? 'female' : 'male';
+        const newGender = toggle === 'Male' ? 'Female' : 'Male';
         setToggle(newGender);
         contacts.gender = newGender;
         setRotate(!rotate);
@@ -34,16 +37,17 @@ export default function EditContact({ contacts,handleCancel }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = await axios
+        await axios
             .patch(`http://localhost:8070/contacts/update/${contacts._id}`, {
                 fullname: updatedData.fullname,
                 email: updatedData.email,
                 gender: toggle,
                 phonenumber: updatedData.phonenumber,
+            }, {
+                headers: {
+                    Authorization: token,
+                }
             }
-                //     {
-                //     headers: { Authorization: localStorage.getItem('token') },
-                // }
             )
             .then((res) => {
                 setshowSaveAlert(true);
@@ -52,6 +56,13 @@ export default function EditContact({ contacts,handleCancel }) {
             .catch((err) => console.log(err));
     };
 
+    //check login status
+    useEffect(() => {
+        const firstLogin = localStorage.getItem("firstLogin");
+        if (!firstLogin) {
+            route.push("/login");
+        }
+    }, []);
 
     return (
         <>
@@ -66,7 +77,6 @@ export default function EditContact({ contacts,handleCancel }) {
                     </td>
                 </tr>
             )}
-
             <tr key={(contacts._id) + 'edit'} className="opacity-90 hover:bg-slate-100">
                 <td className="py-3 px-1 pr-2 ">
                     {contacts.gender == 'male' ? (
@@ -82,13 +92,13 @@ export default function EditContact({ contacts,handleCancel }) {
                         id="fullname"
                         placeholder="fullname"
                         name="fullname"
-                        defaultValue ={contacts.fullname}
+                        defaultValue={contacts.fullname}
                         onChange={handleChangeInput}
                         className="form-input-contact w-44"
                     />
                 </td>
                 <td className="py-3 pr-10 relative">
-                    
+
                     <input
                         type="text"
                         required="required"
@@ -97,8 +107,8 @@ export default function EditContact({ contacts,handleCancel }) {
                         name="gender"
                         value={toggle}
                         onChange={handleChangeInput}
-                        className="form-input-contact w-28 border-r-0"
-                      
+                        className="form-input-contact w-28 h-10 border-r-0"
+
                     />
                     <Image
                         src={IconInterchange}

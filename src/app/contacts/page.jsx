@@ -3,14 +3,13 @@ import LogoWhite from '@/Components/LogoWhite';
 import Image from 'next/image';
 import IconLogout from '../../../public/assets/IconLogout.svg'
 import { useRouter } from 'next/navigation';
-import React, {Fragment,useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
 import DisplayContact from '../../Components/DisplayContact';
 import EditContact from '../../Components/EditContact';
 
 
 export default function Allcontacts() {
-    //const[token,setToken]=useState(null);
     const route = useRouter();
     const [allContacts, setAllContacts] = useState([]);
     const [change, setChange] = useState(false)
@@ -21,28 +20,36 @@ export default function Allcontacts() {
         phonenumber: '',
         gender: '',
     });
+    const token = localStorage.getItem('token');
+
+    //check login status
+    useEffect(() => {
+        const firstLogin = localStorage.getItem("firstLogin");
+        if (!firstLogin) {
+            route.push("/login");
+        }
+    }, [route]);
 
     useEffect(() => {
-        // setToken(localStorage.getItem('token'));
-        // console.log(token);
-        // if (!token) {
-        //     route.push('/login');
-        // }
-
         const getallContacts = async () => {
             await axios
-                .get('http://localhost:8070/contacts')
+                .get('http://localhost:8070/contacts',
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                )
                 .then((res) => {
                     setAllContacts(res.data.contacts);
                 })
                 .catch((err) => {
                     console.log(err);
-                });      
-        };       
+                });
+        };
         getallContacts();
         setChange(false)
-    }, [change]);
-
+    }, [change, token]);
 
     const handleEdit = (e, contacts) => {
         e.preventDefault();
@@ -57,7 +64,12 @@ export default function Allcontacts() {
 
     const handleDelete = async (contactId) => {
         await axios
-            .delete(`http://localhost:8070/contacts/delete/${contactId}`)
+            .delete(`http://localhost:8070/contacts/delete/${contactId}`,
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                })
             .then((res) => {
                 setChange(true)
             })
@@ -66,6 +78,10 @@ export default function Allcontacts() {
             });
     };
 
+    const logout = () => {
+        localStorage.clear();
+        route.push("/login");
+    }
     return (
         <>
             <main>
@@ -114,7 +130,7 @@ export default function Allcontacts() {
                                                         />
                                                     )}
                                                 </Fragment>
-                                            ))}              
+                                            ))}
                                         </tbody>
                                     </table>
                                 </form>
@@ -124,10 +140,14 @@ export default function Allcontacts() {
                                             src={IconLogout}
                                             alt="IconLogout"
                                             className="float-left h-[43px] md:h-[43px] w-[43px] md:w-[43px] -mr-4 cursor-pointer hover:bg-amber-600"
-                                        //onClick={logout()}
+                                            onClick={logout}
                                         />
-                                        <button className="button border-0 font-Futura text-2xl hover:text-amber-600">
-                                            <span className="border-b hover:border-amber-600">logout</span>
+                                        <button className="button border-0 font-Futura text-2xl hover:text-amber-600"
+                                            onClick={logout}
+                                        >
+                                            <span className="border-b hover:border-amber-600">
+                                                logout
+                                            </span>
                                         </button>
                                     </div>
                                 </div>

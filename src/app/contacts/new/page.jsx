@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { isEmpty, isEmail } from '@/utils/validation';
 import { showErrMsg, showSuccessMsg } from "@/utils/Notification";
 import axios from 'axios';
-
+import { useEffect } from 'react';
 
 const initialState = {
     fullname: "",
@@ -21,6 +21,7 @@ export default function NewContact() {
     const route = useRouter();
     const [contact, setContact] = useState(initialState);
     const { fullname, email, phonenumber, gender, err, success } = contact;
+    const token = localStorage.getItem('token');
 
     const handleChangeInput = (e) => {
         const { name, value } = e.target;
@@ -44,6 +45,10 @@ export default function NewContact() {
                 email,
                 phonenumber,
                 gender
+            }, {
+                headers: {
+                    Authorization: token,
+                },
             });
             setContact({ ...contact, err: "", success: res.data.msg });
             route.push('/contacts');
@@ -55,6 +60,18 @@ export default function NewContact() {
         }
     };
 
+    //check login status
+    useEffect(() => {
+        const firstLogin = localStorage.getItem("firstLogin");
+        if (!firstLogin) {
+            route.push("/login");
+        }
+    }, [route]);
+
+    const logout = () => {
+        localStorage.clear();
+        route.push("/login");
+    }
 
     return (
         <main>
@@ -62,7 +79,7 @@ export default function NewContact() {
                 <div className="flex justify-between flex-col h-full font-Futura">
                     <LogoWhite />
                     <div className="mb-10">
-                        <p className="text-white font-bold md:text-[45px] leading-[73px] mb-10 ">
+                        <p className="text-white font-bold md:text-[45px] leading-[73px] mb-8 ">
                             New Contact
                         </p>
                         <div className='text-lg font-Futura'>
@@ -101,7 +118,7 @@ export default function NewContact() {
                                             type="radio"
                                             name="gender"
                                             id="male"
-                                            value="male"
+                                            value="Male"
                                             className="mr-2 border-2 border-white bg-primary mb-1"
                                             onChange={handleChangeInput}
                                         />
@@ -112,7 +129,7 @@ export default function NewContact() {
                                             type="radio"
                                             name="gender"
                                             id="female"
-                                            value="female"
+                                            value="Female"
                                             className="mr-2 border-2 border-white bg-primary mb-1"
                                             onChange={handleChangeInput}
                                         />
@@ -120,9 +137,8 @@ export default function NewContact() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex flex-row justify-between mt-12 font-Futura font-normal md:text-[25px] leading-[50px]">
+                            <div className="flex flex-row justify-between mt-8 font-Futura font-normal md:text-[25px] leading-[50px]">
                                 <button
-                                    //onClick={() => route.push('/contacts/new')}
                                     className="button"
                                 >
                                     add your first contact
@@ -136,10 +152,12 @@ export default function NewContact() {
                                 src={IconLogout}
                                 alt="IconLogout"
                                 className="float-left h-[43px] md:h-[43px] w-[43px] md:w-[43px] -mr-4 cursor-pointer hover:bg-amber-600"
-                            //onClick={logout()}
+                                onClick={logout}
                             />
                             <button className="button border-0 font-Futura text-2xl hover:text-amber-600">
-                                <span className="border-b hover:border-amber-600">logout</span>
+                                <span className="border-b hover:border-amber-600"
+                                    onClick={logout}
+                                >logout</span>
                             </button>
                         </div>
                     </div>

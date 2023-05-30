@@ -1,13 +1,27 @@
 'use client';
-//import { useRouter } from 'next/router';
-//import { useEffect } from 'react';
 import LogoWhite from '../Components/LogoWhite.jsx';
 import Image from 'next/image';
 import IconLogout from '../../public/assets/IconLogout.svg'
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function WelcomePage() {
   const route = useRouter();
+
+  const logout = () => {
+    localStorage.clear();
+    route.push("/login");
+  }
+
+  //check login status
+  useEffect(() => {
+    const firstLogin = localStorage.getItem("firstLogin");
+    if (!firstLogin) {
+      route.push("/login");
+    }
+  }, [route]);
+
+
   return (
     <main>
       <section className="bgcommon">
@@ -36,11 +50,12 @@ export default function WelcomePage() {
                 src={IconLogout}
                 alt="IconLogout"
                 className="float-left h-[43px] md:h-[43px] w-[43px] md:w-[43px] -mr-4 cursor-pointer hover:bg-amber-600"
-              //onClick={logout()}
+                onClick={logout}
               />
-              <button className="button border-0 font-Futura text-2xl hover:text-amber-600">
+              <button className="button border-0 font-Futura text-2xl hover:text-amber-600" onClick={logout}>
                 <span className="border-b hover:border-amber-600">logout</span>
               </button>
+
             </div>
           </div>
         </div>

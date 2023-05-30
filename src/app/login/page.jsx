@@ -16,7 +16,7 @@ const initialState = {
 export default function Login() {
     const [user, setUser] = useState(initialState);
     const route = useRouter();
-    const { email, password,err, success } = user;
+    const { email, password, err, success } = user;
 
     const handleChangeInput = (e) => {
         const { name, value } = e.target;
@@ -48,11 +48,11 @@ export default function Login() {
             setTimeout(() => {
                 route.push('/');
             }, 1000);
-                 
+
         } catch (err) {
             err.response.data.msg &&
                 setUser({ ...user, err: err.response.data.msg, success: "" });
-        
+
         }
     };
     return (

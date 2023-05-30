@@ -7,7 +7,7 @@ import Image from 'next/image';
 import ConfirmAlert from './ConfirmAlert';
 import CustomMessages from './CustomMessages';
 
-export default function DisplayContact({ contacts, handleEdit, handleDelete}) {
+export default function DisplayContact({ contacts, handleEdit, handleDelete }) {
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [confirmPopUp, setConfirmPopUp] = useState(false);
     const handleDeleteConfirm = (e) => {
@@ -54,7 +54,7 @@ export default function DisplayContact({ contacts, handleEdit, handleDelete}) {
                     {contacts.gender == 'male' ? (
                         <Image src={MaleAvatar} alt="male avatar" />
                     ) : (
-                            <Image src={FemaleAvatar} alt="female avatar" />
+                        <Image src={FemaleAvatar} alt="female avatar" />
                     )}
                 </td>
                 <td className="py-3 pr-10">{contacts.fullname}</td>
